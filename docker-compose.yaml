@@ -1,0 +1,37 @@
+version: "3"
+services:
+  pgsql:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - 5431:5432
+  app1:
+    build: .
+    environment:
+      - APP_NAME=app1
+      - DATABASE_URL=postgresql://postgres:password@pgsql:5432/postgres
+    ports:
+      - "3001:3000"
+  app2:
+    build: .
+    environment:
+      - APP_NAME=app2
+      - DATABASE_URL=postgresql://postgres:password@pgsql:5432/postgres
+    ports:
+      - "3002:3000"
+  app3:
+    build: .
+    environment:
+      - APP_NAME=app3
+      - DATABASE_URL=postgresql://postgres:password@pgsql:5432/postgres
+    ports:
+      - "3003:3000"
+  # api:
+  #   build: .
+  #   environment:
+  #     - APP_NAME=api
+  #     - DATABASE_URL=postgresql://postgres:password@pgsql:5432/postgres
+  #   ports:
+  #     - "3000:3000"
