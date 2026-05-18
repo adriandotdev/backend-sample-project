@@ -1,4 +1,4 @@
-name: API Continuous Integration
+name: Continuous Integration / Continuous Deployment
 
 on:
   push:
@@ -12,19 +12,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        name: "Install pnpm"
       - uses: actions/setup-node@v6
         with:
           node-version: 25
-      - run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm run lint
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run linting
+        run: pnpm run lint
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        name: "Install pnpm"
       - uses: actions/setup-node@v6
         with:
           node-version: 25
-      - run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm run test
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run test
+        run: pnpm run test
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: adriandotdev/nodeapp:latest

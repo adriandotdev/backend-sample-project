@@ -34,3 +34,4 @@ Thumbs.db
 *.key
 *.crt
 *.csr
+*.secrets
