@@ -15,6 +15,13 @@
       "when": 1779276800984,
       "tag": "0001_cute_ozymandias",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779288927247,
+      "tag": "0002_sudden_frog_thor",
+      "breakpoints": true
     }
   ]
 }
