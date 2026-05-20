@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { errorHandler } from "./middleware/errorHandler";
 import { morganLogger } from "./middleware/morgan";
+import authRoutes from "./routes/auth";
 import productRoutes from "./routes/products";
 
 const app = express();
@@ -24,6 +25,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/products", productRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.use(errorHandler);
 
