@@ -16,6 +16,7 @@ export class AuthController {
 					id: users.id,
 					username: users.username,
 					password: users.password,
+					role: users.role,
 				})
 				.from(users)
 				.where(eq(users.username, username));
@@ -27,7 +28,7 @@ export class AuthController {
 			if (!isMatch)
 				return res.status(401).json({ message: "Invalid credentials" });
 
-			const tokens = this.signTokens(userFromDb[0].id);
+			const tokens = this.signTokens(userFromDb[0].id, userFromDb[0].role);
 			return res.status(200).json(tokens);
 		} catch (err) {
 			next(err);
@@ -50,9 +51,9 @@ export class AuthController {
 			const [created] = await db
 				.insert(users)
 				.values({ name, username, password: hashedPassword })
-				.returning({ id: users.id });
+				.returning({ id: users.id, role: users.role });
 
-			const tokens = this.signTokens(created.id);
+			const tokens = this.signTokens(created.id, created.role);
 			return res
 				.status(201)
 				.json({ ...tokens, message: "Signed up successfully" });
@@ -61,8 +62,8 @@ export class AuthController {
 		}
 	}
 
-	private signTokens(userId: number) {
-		const payload = { userId };
+	private signTokens(userId: number, role: string) {
+		const payload = { userId, role };
 		const opts = {
 			issuer: "mybackend-api",
 			audience: "mybackend-client",
